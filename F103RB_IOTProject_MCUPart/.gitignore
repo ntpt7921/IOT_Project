@@ -1,0 +1,7 @@
+Debug/
+Dev/
+
+.cache/
+
+*.launch
+compile_commands.json
