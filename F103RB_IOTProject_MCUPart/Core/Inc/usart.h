@@ -29,13 +29,14 @@ extern "C" {
 #include "main.h"
 
 /* USER CODE BEGIN Includes */
-
+#include <stdio.h>
+#include "global_objects.h"
 /* USER CODE END Includes */
 
 extern UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN Private defines */
-
+void send_output();
 /* USER CODE END Private defines */
 
 void MX_USART2_UART_Init(void);
