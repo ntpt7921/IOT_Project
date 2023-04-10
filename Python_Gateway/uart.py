@@ -10,7 +10,8 @@ def getPort():
         if "CP210x" in strPort:
             splitPort = strPort.split(" ")
             commPort = (splitPort[0])
-    return commPort
+    # return commPort
+    return "COM5"
 
 if getPort() != "None":
     ser = serial.Serial(port=getPort(), baudrate=115200)
