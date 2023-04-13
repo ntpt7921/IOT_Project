@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:baselineAligned="false"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="10"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/logoBK"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:contentDescription="Logo of HCMUT"
+            app:srcCompat="@drawable/bk_logo" />
+
+        <TextView
+            android:id="@+id/topBarText"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:gravity="center"
+            android:text="IOT Project App"
+            android:textSize="30sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="40"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/textCurrentTemperature"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Loading"
+            android:textSize="50sp"
+            android:textColor="#FFFFFF"
+            android:background="#FF0000"
+
+            android:layout_margin="10dp"
+
+            tools:ignore="NestedWeights"
+            />
+
+        <TextView
+            android:id="@+id/textCurrentRelativeHumidity"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Loading"
+            android:textSize="50sp"
+            android:textColor="#FFFFFF"
+            android:background="#0000FF"
+
+            android:layout_margin="10dp"
+            />
+    </LinearLayout>
+
+    <com.github.angads25.toggle.widget.LabeledSwitch
+        android:id="@+id/toggleButtonLight"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="20"
+        android:layout_marginHorizontal="30dp"
+        android:layout_marginVertical="5dp"
+        android:textSize="30sp"
+        app:on="false"
+        app:textOn="Đèn Bật"
+        app:textOff="Đèn Tắt"
+        android:enabled="false"
+        app:colorBorder="@color/colorAccent"/>
+
+    <com.github.angads25.toggle.widget.LabeledSwitch
+        android:id="@+id/toggleButtonPump"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="20"
+        android:layout_marginHorizontal="30dp"
+        android:layout_marginVertical="5dp"
+        android:textSize="30sp"
+        app:on="false"
+        app:textOn="Bơm Bật"
+        app:textOff="Bơm Tắt"
+        android:enabled="false"
+        app:colorBorder="@color/colorAccent"/>
+
+    <TextView
+        android:id="@+id/textCurrentState"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="10"
+        android:gravity="center"
+        android:text="" />
+
+</LinearLayout>
