@@ -21,23 +21,9 @@
 #include "usart.h"
 
 /* USER CODE BEGIN 0 */
-uint32_t T_value = 38;
-char str[50];
-
-void get_T_value()
-{
-	T_value = 37;
-}
-
-void send_output()
-{
-	HAL_UART_Transmit(&huart2, (void*)str , sprintf(str, "!1:T:%d#", T_value), 1000);
-}
 /* USER CODE END 0 */
 
 UART_HandleTypeDef huart2;
-
-/* USART2 init function */
 
 void MX_USART2_UART_Init(void)
 {

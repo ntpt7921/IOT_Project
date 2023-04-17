@@ -5,7 +5,7 @@
  *      Author: Admin
  */
 
-#include <scheduler.h>
+#include "scheduler.h"
 
 sTasks SCH_tasks_G[SCH_MAX_TASKS];
 uint8_t head_index_task = 0;
@@ -81,8 +81,8 @@ void SCH_Add_Task ( void (*pFunction)() ,
 	if (!isFull) {
 		sTasks newTask;
 		newTask.pTask = pFunction;
-		newTask.Delay = DELAY / TIMER_CYCLE;
-		newTask.Period = PERIOD / TIMER_CYCLE;
+		newTask.Delay = DELAY / SCH_TICK_CYCLE_DURATION_MS;
+		newTask.Period = PERIOD / SCH_TICK_CYCLE_DURATION_MS;
 		newTask.RunMe = 0;
 
 		newTask.TaskID = tail_index_task;

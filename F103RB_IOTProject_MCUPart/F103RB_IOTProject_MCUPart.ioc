@@ -171,3 +171,4 @@ VP_TIM2_VS_ClockSourceINT.Signal=TIM2_VS_ClockSourceINT
 board=NUCLEO-F103RB
 boardIOC=true
 isbadioc=false
+isbadioc=false

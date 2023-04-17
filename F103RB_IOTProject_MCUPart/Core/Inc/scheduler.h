@@ -9,7 +9,10 @@
 #define INC_SCHEDULER_H_
 
 #include <stdint.h>
-#include "global_objects.h"
+
+#define SCH_TICK_CYCLE_DURATION_MS 10
+#define SCH_MAX_TASKS	10
+#define SCH_MAX_TASKS_1 SCH_MAX_TASKS - 1
 
 typedef struct{
 	void (*pTask)(void);
@@ -20,8 +23,7 @@ typedef struct{
 	uint32_t 	TaskID;
 } sTasks;
 
-#define SCH_MAX_TASKS	10
-#define SCH_MAX_TASKS_1 SCH_MAX_TASKS - 1
+
 
 void SCH_Init(void);
 
