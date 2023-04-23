@@ -46,7 +46,7 @@ def processData(client, data):
 mess = ""
 def readSerial(client):
     try:
-        bytesToRead = ser.inWaiting()
+        bytesToRead = ser.in_waiting
         if (bytesToRead > 0):
             global mess
             mess = mess + ser.read(bytesToRead).decode("UTF-8")
