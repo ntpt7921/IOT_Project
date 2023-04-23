@@ -18,15 +18,18 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "tim.h"
+#include "dma.h"
 #include "usart.h"
 #include "gpio.h"
+#include "tim.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "scheduler.h"
-#include <stdio.h>
+#include "Logical/Scheduler/Scheduler.h"
+#include "Logical/Scheduler/SchedulerTask.h"
+#include "UserSchedulerTask/blink_onboard_led.h"
 #include <inttypes.h>
+#include <stdio.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -58,51 +61,14 @@ void SystemClock_Config(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-#define MAX_BUFFER_SIZE 30
-#define UART_MAX_BLOCKING_SEND_TIME_MS 50
-
-uint8_t receive_buffer[ MAX_BUFFER_SIZE ];
-uint8_t send_buffer[ MAX_BUFFER_SIZE ];
-uint8_t receive_buffer_index = 0;
-uint8_t received_data_flag = 0;
-
-static const uint8_t ACK_VALUE = 0xAC;
-
-void send_output()
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-	uint32_t T_value_test = 38;
-	HAL_UART_Transmit(&huart2, send_buffer,
-			sprintf((char*) send_buffer, "!1:T:%" PRIu32 "#", T_value_test),
-			1000);
-}
-
-void blink_LED()
-{
-	HAL_GPIO_TogglePin(Led_PA5_GPIO_Port, Led_PA5_Pin);
-}
-
-void send_temp_and_blink_LED()
-{
-	HAL_GPIO_TogglePin(Led_PC9_GPIO_Port, Led_PC9_Pin);
-	send_output();
-}
-
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
-{
-	if (huart->Instance == USART2)
+	if (htim->Instance == TIM2)
 	{
-		HAL_UART_Transmit(&huart2,(uint8_t *)&ACK_VALUE, 2,
-				UART_MAX_BLOCKING_SEND_TIME_MS);
-
-		receive_buffer_index++;
-		if (receive_buffer_index >= MAX_BUFFER_SIZE)
-			receive_buffer_index = 0;
-
-		received_data_flag = 1;
-
-		HAL_UART_Receive_IT(&huart2, receive_buffer + receive_buffer_index, 1);
+		Scheduler_Update();
 	}
 }
+
 /* USER CODE END 0 */
 
 /**
@@ -133,25 +99,23 @@ int main(void)
 
 	/* Initialize all configured peripherals */
 	MX_GPIO_Init();
+	MX_DMA_Init();
 	MX_USART2_UART_Init();
-	MX_TIM2_Init();
 	/* USER CODE BEGIN 2 */
-	HAL_TIM_Base_Start_IT(&htim2);
-	HAL_UART_Receive_IT(&huart2, receive_buffer + receive_buffer_index, 1);
 
-	SCH_Add_Task(blink_LED,
-			0, // start at
-			1000); // with period ms
-	SCH_Add_Task(send_temp_and_blink_LED,
-			1000, // start at
-			10000); // with period ms
+	Scheduler_Add(blink_onboard_led, NULL, 0,
+				  MS_TO_SCHEDTICK(500), 0,
+				  BLINK_ONBOARD_LED_SCHEDTASK_ID);
+
+	Scheduler_Init();
+
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
 	while (1)
 	{
-		SCH_Dispatch_Tasks();
+		Scheduler_Dispatch();
 		/* USER CODE END WHILE */
 
 		/* USER CODE BEGIN 3 */
@@ -165,20 +129,19 @@ int main(void)
  */
 void SystemClock_Config(void)
 {
-	RCC_OscInitTypeDef RCC_OscInitStruct =
-	{ 0 };
-	RCC_ClkInitTypeDef RCC_ClkInitStruct =
-	{ 0 };
+	RCC_OscInitTypeDef RCC_OscInitStruct = { 0 };
+	RCC_ClkInitTypeDef RCC_ClkInitStruct = { 0 };
 
 	/** Initializes the RCC Oscillators according to the specified parameters
 	 * in the RCC_OscInitTypeDef structure.
 	 */
-	RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+	RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+	RCC_OscInitStruct.HSEState = RCC_HSE_BYPASS;
+	RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
 	RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-	RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
 	RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-	RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI_DIV2;
-	RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL16;
+	RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+	RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL8;
 	if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
 	{
 		Error_Handler();
@@ -186,8 +149,8 @@ void SystemClock_Config(void)
 
 	/** Initializes the CPU, AHB and APB buses clocks
 	 */
-	RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK
-			| RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
+	RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_PCLK1
+			| RCC_CLOCKTYPE_PCLK2;
 	RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
 	RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
 	RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
@@ -200,10 +163,7 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-{
-	SCH_Update();
-}
+
 /* USER CODE END 4 */
 
 /**
@@ -232,8 +192,9 @@ void Error_Handler(void)
 void assert_failed(uint8_t *file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */
-  /* User can add his own implementation to report the file name and line number,
-     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+    /* User can add his own implementation to report the file name and line
+       number, ex: printf("Wrong parameters value: file %s on line %d\r\n", file,
+       line) */
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */

@@ -1,4 +1,0 @@
-#ifndef INC_GLOBAL_OBJECTS_H_
-#define INC_GLOBAL_OBJECTS_H_
-
-#endif /* INC_GLOBAL_OBJECTS_H_ */

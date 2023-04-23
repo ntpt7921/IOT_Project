@@ -12,10 +12,10 @@ typedef void (*SchedulerTask_Callback)(void*);
 
 /*
  * NOTE:
- * The scheduler_task_t is a structure containing all the required infomation
+ * The SchedulerTask is a structure containing all the required infomation
  * to represent a task in our scheduler implementation
  *
- * The priority of a test is determined as according to a rule: compare by priority,
+ * The priority of a task is determined as according to a rule: compare by priority,
  * then compare by runAtTick next
  */
 typedef struct
