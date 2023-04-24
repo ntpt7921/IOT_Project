@@ -6,18 +6,19 @@ import numpy as np
 np.set_printoptions(suppress=True)
 
 # Load the model
-model = load_model("keras_Model.h5", compile=False)
+model = load_model("./keras_model.h5", compile=False)
 
 # Load the labels
 #class_names = open("labels.txt", "r").readlines()
-class_names = ["Không đeo khẩu trang", "Đeo khẩu trang"]
+label = [line.replace('\n', '').split(sep=' ', maxsplit=1)[1] 
+    for line in open("./labels.txt").readlines()]
 
 # CAMERA can be 0 or 1 based on default camera of your computer
 camera = cv2.VideoCapture(0)
 
 def image_deterctor():
     # Grab the webcamera's image.
-    ret, image = camera.read()
+    _, image = camera.read()
 
     # Resize the raw image into (224-height,224-width) pixels
     image = cv2.resize(image, (224, 224), interpolation=cv2.INTER_AREA)
@@ -34,10 +35,12 @@ def image_deterctor():
     # Predicts the model
     prediction = model.predict(image)
     index = np.argmax(prediction)
-    class_name = class_names[index]
-    confidence_score = prediction[0][index]
-
-    # Print prediction and confidence score
-    # print("Class:", class_name, end="")
-    print("Confidence Score:", str(np.round(confidence_score * 100))[:-2], "%")
-    return class_name
+    if (index in range(len(label))):
+        class_name = label[index]
+        confidence_score = prediction[0][index]
+        # Print prediction and confidence score
+        print("Class:", class_name)
+        print("Confidence Score:", str(np.round(confidence_score * 100))[:-2], "%")
+        return class_name
+    else:
+        return "";

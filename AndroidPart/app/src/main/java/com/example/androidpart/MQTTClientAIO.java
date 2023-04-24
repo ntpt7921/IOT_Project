@@ -67,7 +67,7 @@ public class MQTTClientAIO {
                     mqttAndroidClient.setBufferOpts(disconnectedBufferOptions);
 
                     for (String topic : arrayTopics)
-                        subscribeToTopic(topic);
+                        subscribeToTopic(topic, 1);
                 }
 
                 @Override
@@ -82,9 +82,9 @@ public class MQTTClientAIO {
         }
     }
 
-    public void subscribeToTopic(String topic) {
+    public void subscribeToTopic(String topic, int qos) {
         try {
-            mqttAndroidClient.subscribe(topic, 0, null, new IMqttActionListener() {
+            mqttAndroidClient.subscribe(topic, qos, null, new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
                     Log.i("MQTTHelper", "Subscribe to topic: " + topic + " succeeded");
@@ -103,10 +103,30 @@ public class MQTTClientAIO {
         }
     }
 
+    public void unsubscribeToTopic(String topic) {
+        try {
+            mqttAndroidClient.unsubscribe(topic, null, new IMqttActionListener() {
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) {
+                    Log.i("MQTTHelper", "Unsubscribe to topic: " + topic + " succeeded");
+                }
+
+                @Override
+                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                    Log.i("MQTTHelper", "Unsubscribe to topic: " + topic + " failed");
+                }
+            });
+
+        } catch (MqttException ex) {
+            System.err.println("Exception unsubscribing");
+            ex.printStackTrace();
+        }
+    }
+
     public void publishToTopic(String topic, String payload) {
         try {
             MqttMessage message = new MqttMessage();
-            message.setQos(0);
+            message.setQos(1);
             message.setRetained(false);
             message.setPayload(payload.getBytes(StandardCharsets.UTF_8));
 

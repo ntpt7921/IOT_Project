@@ -63,7 +63,7 @@ float get_humidity_value(void)
 void get_and_send_temperature(void *param)
 {
 	uint16_t temp_value = read_adc1_value();
-	txcv_uart2.txDataSize = sprintf((char *) txcv_uart2.txBuffer, "!0:T:%u", temp_value);
+	txcv_uart2.txDataSize = sprintf((char *) txcv_uart2.txBuffer, "!0:T:%u#", temp_value);
 	Hardware_TransceiverUART_Send(&txcv_uart2);
 	return;
 }
@@ -71,7 +71,7 @@ void get_and_send_temperature(void *param)
 void get_and_send_humidity(void *param)
 {
 	uint16_t humid_value = read_adc2_value();
-	txcv_uart2.txDataSize = sprintf((char *) txcv_uart2.txBuffer, "!0:H:%u", humid_value);
+	txcv_uart2.txDataSize = sprintf((char *) txcv_uart2.txBuffer, "!0:H:%u#", humid_value);
 	Hardware_TransceiverUART_Send(&txcv_uart2);
 	return;
 }

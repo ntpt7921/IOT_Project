@@ -8,7 +8,7 @@ def getPort():
         for i in range(0, N):
             port = ports[i]
             strPort = str(port)
-            if "CP210x" in strPort:
+            if "ttyACM0" in strPort:
                 splitPort = strPort.split(" ")
                 commPort = (splitPort[0])
         return commPort
@@ -23,23 +23,32 @@ try:
         raise Exception("No valid serial port selected.")
     ser = serial.Serial(port=port, baudrate=115200)
     print("Serial PORT: " + str(ser))
+    ser.reset_input_buffer()
 except Exception as e:
     print("Error:", e)
 
 
-mess = ""
 def processData(client, data):
     try:
         data = data.replace("!", "")
         data = data.replace("#", "")
         splitData = data.split(":")
-        print(splitData)
+        if (len(splitData) < 2):
+            return;
+
+        # print(splitData)
+
         if splitData[1] == "T":
-            client.publish("cambien1", splitData[2])
+            temperature = int(splitData[2]) / 4095 * 40.0
+            client.publish("sensor-temperature", str(round(temperature, 2)))
         elif splitData[1] == "H":
-            client.publish("cambien2", splitData[2])
+            humid = int(splitData[2]) / 4095 * 100.0
+            client.publish("sensor-humidity", str(round(humid, 2)))
+        elif splitData[1] == "P":
+            client.publish("pump-state-ack", splitData[2])
         elif splitData[1] == "L":
-            client.publish("cambien3", splitData[2])
+            client.publish("light-state-ack", splitData[2])
+            
     except Exception as e:
         print("Error:", e)
 
@@ -50,6 +59,9 @@ def readSerial(client):
         if (bytesToRead > 0):
             global mess
             mess = mess + ser.read(bytesToRead).decode("UTF-8")
+
+            # print(mess)
+
             while ("#" in mess) and ("!" in mess):
                 start = mess.find("!")
                 end = mess.find("#")

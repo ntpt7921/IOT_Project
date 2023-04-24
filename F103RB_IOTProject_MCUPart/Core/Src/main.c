@@ -75,25 +75,20 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	}
 }
 
-void uart_receive_callback(TransceiverUART *txcv)
-{
-	HAL_GPIO_TogglePin(ONBOARD_LED_GPIO_Port, ONBOARD_LED_Pin);
-}
-
 void systemInitialization(void)
 {
 	HAL_ADCEx_Calibration_Start(&hadc1);
 	HAL_ADCEx_Calibration_Start(&hadc2);
 
-	Hardware_TransceiverUART_Init(&txcv_uart2, &huart2, uart_receive_callback, NULL);
+	Hardware_TransceiverUART_Init(&txcv_uart2, &huart2, NULL, NULL);
 	Hardware_TransceiverUART_Receive(&txcv_uart2);
 
-	Scheduler_Add(blink_onboard_led, NULL, 0, MS_TO_SCHEDTICK(500), 0,
-				  BLINK_ONBOARD_LED_SCHEDTASK_ID);
+//	Scheduler_Add(blink_onboard_led, NULL, 0, MS_TO_SCHEDTICK(500), 0,
+//				  BLINK_ONBOARD_LED_SCHEDTASK_ID);
 	Scheduler_Add(read_uart_data_in_buffer, NULL, 1, MS_TO_SCHEDTICK(5), 0,
 				  READ_UART_DATA_SCHEDTASK_ID);
-	Scheduler_Add(get_and_send_temperature, NULL, 0, MS_TO_SCHEDTICK(1000), 1000, TEMP_TASK_ID);
-	Scheduler_Add(get_and_send_humidity, NULL, 0, MS_TO_SCHEDTICK(1000), 1500, HUMID_TASK_ID);
+	Scheduler_Add(get_and_send_temperature, NULL, 0, MS_TO_SCHEDTICK(10000), 1000, TEMP_TASK_ID);
+	Scheduler_Add(get_and_send_humidity, NULL, 0, MS_TO_SCHEDTICK(10000), 1500, HUMID_TASK_ID);
 
 	Scheduler_Init();
 
