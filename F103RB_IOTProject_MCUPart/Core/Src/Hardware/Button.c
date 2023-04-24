@@ -1,11 +1,4 @@
-/*
- * button.c
- *
- *  Created on: Oct 26, 2022
- *      Author: ntpt
- */
-
-#include "Hardware/button.h"
+#include <Hardware/Button.h>
 
 void Hardware_Button_PollAndUpdate(volatile Button_t *bt)
 {

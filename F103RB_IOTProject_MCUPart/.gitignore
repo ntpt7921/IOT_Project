@@ -1,7 +1,11 @@
+# Build directory
 Debug/
 Dev/
 
+# Don't know what it is, but don't need it
 .cache/
-
 *.launch
+
+# Use for personal Neovim config, unrelated to the code of tooling of STM32CubeIDE
 compile_commands.json
+.clang-format
