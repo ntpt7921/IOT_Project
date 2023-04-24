@@ -12,7 +12,7 @@ FiniteStateMachine_State FiniteStateMachine_GetNextState(FiniteStateMachine *fsm
     return fsm->get_next_state(fsm->current_state);
 }
 
-void Logical_Fsm_SetNextState(FiniteStateMachine *fsm)
+void FiniteStateMachine_SetNextState(FiniteStateMachine *fsm)
 {
     FiniteStateMachine_State next_state = FiniteStateMachine_GetNextState(fsm);
     if (next_state == fsm->current_state)

@@ -11,5 +11,5 @@
 // is of type SchedulerTask_Callback
 void blink_onboard_led(void *param)
 {
-	HAL_GPIO_TogglePin(Led_PA5_GPIO_Port, Led_PA5_Pin);
+	HAL_GPIO_TogglePin(ONBOARD_LED_GPIO_Port, ONBOARD_LED_Pin);
 }
